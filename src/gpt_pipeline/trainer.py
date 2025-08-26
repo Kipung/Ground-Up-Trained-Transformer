@@ -5,11 +5,13 @@
 # Here is the data set link: https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt
 
 # Lame Torch stuff that we want to eventually code by hand
+import parameters
+
 import torch
 import torch.nn as nn
 
 class Dataset:
-    def __init__(self, file_path="./src/gpt_pipeline/TinyShakespeare.txt", block_size=64, batch_size=256, debug=False):
+    def __init__(self, file_path="./src/gpt_pipeline/TinyShakespeare.txt", block_size=parameters.block_size, batch_size=parameters.batch_size, debug=False):
         self.debug = debug
         self.block_size = block_size # Context Length for Predictions (maximum)
         self.batch_size = batch_size # how many independent sequences will we process in parallel
@@ -55,7 +57,6 @@ class Dataset:
 
         # this is the chunk of data we will train in an instant (this improves performance drastically (not all data will be trained at once))
         # trainer_data[:block_size+1]
-
 
 def push(Dataset: Dataset, model: nn.Module, device_model):
     # PyTorch Optimizer (lame)
