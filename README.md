@@ -7,3 +7,4 @@ A fun Probabalistic character by character Model using a Generatively Pretrained
 https://arxiv.org/abs/1706.03762
 
 ## Tiny Shakespeare
+In src/trainer (about a 1mb dataset)
