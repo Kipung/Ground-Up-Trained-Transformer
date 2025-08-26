@@ -25,13 +25,16 @@ color 0C
 echo [DO NOT CLOSE]
 color 07
 
+call cuda\Scripts\activate.bat
+
 :: Upgrade pip to the latest version
 py -m pip install --upgrade pip
 
 py -m pip install numpy
 py -m pip install matplotlib
-py -m pip install pylzma
-py -m pip install ipykernel
-py -m pip install jupyter
 
-call cuda\Scripts\activate.bat
+:: We want to limit our reliance on torch and eventually get rid of it, but for now its helpful
+py -m pip install torch 
+
+:: py -m pip install pylzma <- this is a C++ compression algorithm that i dont wanna use
+
