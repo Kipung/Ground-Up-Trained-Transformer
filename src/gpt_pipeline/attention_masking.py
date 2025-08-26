@@ -4,28 +4,24 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-# Parameters
-n_embd = 384
-n_head = 6
-n_layer = 6
-dropout = 0.2
+
 
 class Head(nn.Module):
     """ One Head of Self Attention Masking """
 
     def __init__(self, head_size):
         super().__init__()
-        self.key = nn.Linear(n_embd, head_size, bias=False)
-        self.query = nn.Linear(n_embd, head_size, bias=False)
-        self.value = nn.Linear(n_embd, head_size, bias=False)
+        self.key = nn.Linear(parameters.n_embd, head_size, bias=False)
+        self.query = nn.Linear(parameters.n_embd, head_size, bias=False)
+        self.value = nn.Linear(parameters.n_embd, head_size, bias=False)
         self.register_buffer('tril', torch.tril(torch.ones(parameters.block_size, parameters.block_size))) # There needs to be a more efficient way to get the block size from the dataset class
 
-        self.dropout = nn.Dropout(dropout)
+        self.dropout = nn.Dropout(parameters.dropout)
     
     def forward(self, x):
         # input <- (Batch, time-step, channels) or (B, T, C)
         # output -> (Batch, time-step, head size)
-        B, T, C = x.shape()
+        B, T, C = x.shape
         k = self.key(x) # (B, T, hs)
         q = self.query(x) # (B, T, hs)
 
@@ -43,11 +39,15 @@ class Head(nn.Module):
 class MultiHeadAttention(nn.Module):
     """ Multiple Heads of self-attention (in parallel) """
 
+    # I think the thing we are doing is called soft attention
+
+    # we can do weighted aggregation of past elements by using echelon matricies, and for MHA this just happens a lot for more accuracy
+
     def __init__(self, num_heads, heads_size):
         super().__init__()
         self.heads = nn.ModuleList([Head(heads_size) for _ in range(num_heads)]) # Fill a list of heads
-        self.proj = nn.Linear(heads_size * num_heads, n_embd)
-        self.dropout = nn.Dropout(dropout)
+        self.proj = nn.Linear(heads_size * num_heads, parameters.n_embd)
+        self.dropout = nn.Dropout(parameters.dropout)
 
     def forward(self, x):
         out = torch.cat([h(x) for h in self.heads], dim=-1)
