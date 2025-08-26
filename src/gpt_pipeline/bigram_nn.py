@@ -2,13 +2,15 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
+# wont return shakespeare but you can use this to look for loss scaling
+
 class BigramLanguageModel(nn.Module):
     def __init__(self, vocab_size):
         super().__init__()
         # each token directly reads off the logits (scores) for the next token from a lookup table
         self.token_embedding_table = nn.Embedding(vocab_size, vocab_size)
 
-    def forward(self, idx, targets):
+    def forward(self, idx, targets=None):
         # idx and targets are both tensor of integers
         logits = self.token_embedding_table(idx) # (Batch by time by channel) tensor (B, T, C)
 
