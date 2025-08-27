@@ -22,6 +22,10 @@ class GPTLanguageModel(nn.Module):
 
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+        if self.device == "cuda":
+            print("GPU:", torch.cuda.get_device_name(0))
+            print("Memory Allocated:", round(torch.cuda.memory_allocated(0)/1024**2, 1), "MB")
+
         self.apply(self._init_weights)
 
     # this is some chatGPT jargain. Im hoping that our version can avoid weird stuff like this

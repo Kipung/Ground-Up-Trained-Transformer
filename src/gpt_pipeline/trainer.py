@@ -61,7 +61,7 @@ class Dataset:
         # this is the chunk of data we will train in an instant (this improves performance drastically (not all data will be trained at once))
         # trainer_data[:block_size+1]
 
-def push(Dataset: Dataset, model: nn.Module, device_model):
+def train(Dataset: Dataset, model: nn.Module, device_model):
     optimizer = torch.optim.AdamW(model.parameters(), lr=Dataset.learning_rate)
     print(sum(p.numel() for p in device_model.parameters())/1e6, 'M parameters')
 
@@ -117,11 +117,12 @@ def push(Dataset: Dataset, model: nn.Module, device_model):
             last_print = now
 
     print()  # move to new line after finishing
+    torch.save(device_model.state_dict(), f"./src/weights/trained_data{Dataset.max_iterations}")
+    
 
-    # Generate from the model
+def push_data(Dataset: Dataset, device_model):
     context = torch.zeros((1,1), dtype=torch.long, device=Dataset.device)
     print(Dataset.decode(device_model.generate(context, max_new_tokens=500)[0].tolist()))
-
 
 def estimate_loss(Dataset: Dataset, model: nn.Module):
     out = {}
