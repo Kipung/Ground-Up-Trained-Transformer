@@ -18,7 +18,8 @@ class Dataset:
         self.debug = debug
         self.block_size = block_size # Context Length for Predictions (maximum)
         self.batch_size = batch_size # how many independent sequences will we process in parallel
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        # self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.device = 'cpu'
         self.learning_rate = 3e-4
         self.eval_iterations = 200
         self.eval_interval = 200
