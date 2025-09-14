@@ -34,7 +34,11 @@ py -m pip install numpy
 py -m pip install matplotlib
 
 :: We want to limit our reliance on torch and eventually get rid of it, but for now its helpful
-py -m pip install torch 
+:: py -m pip install torch 
+
+:: Torch 2.4.0 with CUDA 12.1
+py -m pip install torch --index-url https://download.pytorch.org/whl/cu121
+
 
 :: py -m pip install pylzma <- this is a C++ compression algorithm that i dont wanna use
 

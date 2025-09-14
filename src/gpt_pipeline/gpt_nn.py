@@ -20,8 +20,8 @@ class GPTLanguageModel(nn.Module):
         self.ln_f = nn.LayerNorm(parameters.n_embd) # Final Layer Normal
         self.lm_head = nn.Linear(parameters.n_embd, vocab_size)
 
-        #self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.device = 'cpu'
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 
         if self.device == "cuda":
             print("GPU:", torch.cuda.get_device_name(0))

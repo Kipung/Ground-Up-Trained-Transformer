@@ -18,8 +18,7 @@ class Dataset:
         self.debug = debug
         self.block_size = block_size # Context Length for Predictions (maximum)
         self.batch_size = batch_size # how many independent sequences will we process in parallel
-        # self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.device = 'cpu'
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.learning_rate = 3e-4
         self.eval_iterations = 200
         self.eval_interval = 200
@@ -64,7 +63,8 @@ class Dataset:
 
 def train(Dataset: Dataset, model: nn.Module, device_model):
     optimizer = torch.optim.AdamW(model.parameters(), lr=Dataset.learning_rate)
-    print(sum(p.numel() for p in device_model.parameters())/1e6, 'M parameters')
+    params = sum(p.numel() for p in device_model.parameters())/1e6
+    print(params, 'M parameters')
 
     start_time = time.time()
     avg_time = None
@@ -118,7 +118,7 @@ def train(Dataset: Dataset, model: nn.Module, device_model):
             last_print = now
 
     print()  # move to new line after finishing
-    torch.save(device_model.state_dict(), f"./src/weights/trained_data{Dataset.max_iterations}")
+    torch.save(device_model.state_dict(), f"./src/weights/trained_data{params}")
     
 
 def push_data(Dataset: Dataset, device_model):
