@@ -22,10 +22,12 @@ class GPTLanguageModel(nn.Module):
 
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+        reserve = torch.empty(int(2 * 1024**3 / 4), dtype=torch.float32, device="cuda:0")
 
         if self.device == "cuda":
             print("GPU:", torch.cuda.get_device_name(0))
-            print("Memory Allocated:", round(torch.cuda.memory_allocated(0)/1024**2, 1), "MB")
+            print("Allocated:", round(torch.cuda.memory_allocated(0)/1024**2, 1), "MB")
+            print("Reserved: ", round(torch.cuda.memory_reserved(0)/1024**2, 1), "MB")
 
         self.apply(self._init_weights)
 

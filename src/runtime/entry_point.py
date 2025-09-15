@@ -1,4 +1,5 @@
 import sys
+import time
 sys.path.append("./src")
 
 import torch
@@ -18,9 +19,11 @@ dataset = trainer.Dataset()
 gpt_model = GPT.GPTLanguageModel(dataset.vocab_size)
 m = gpt_model.to(dataset.device)
 
-trainer.train(dataset, gpt_model, m)
+# trainer.train(dataset, gpt_model, m)
 
-# gpt_model.load_state_dict(torch.load("./src/weights/trained_data2000"))
-# gpt_model.eval() # put in reference mode?
+gpt_model.load_state_dict(torch.load("./src/weights/trained_data19.005505"))
+gpt_model.eval() # put in reference mode?
 
-# output.line("ROMEO:", dataset, m)
+while (True):
+    output.line("ROMEO:", dataset, m)
+    time.sleep(5);
