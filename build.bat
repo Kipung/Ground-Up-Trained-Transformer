@@ -37,7 +37,7 @@ python -m pip install matplotlib
 :: py -m pip install torch 
 
 :: Torch 2.4.0 with CUDA 12.1
-python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cu129
+python -m pip install torch==2.0.0+cu129 -f https://download.pytorch.org/whl/torch_stable.html
 
 
 :: py -m pip install pylzma <- this is a C++ compression algorithm that i dont wanna use

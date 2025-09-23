@@ -2,4 +2,7 @@ src/__pycache__
 .vscode
 cuda
 
+src/weights
+
 src/gpt_pipeline/__pycache__
+

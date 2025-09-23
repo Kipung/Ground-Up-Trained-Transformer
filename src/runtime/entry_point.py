@@ -5,19 +5,23 @@ sys.path.append("./src")
 import torch
 
 # Methods
-from gpt_pipeline import output
+from gpt_pipeline import output as CLI
+from gpt_pipeline.dataset_assembly import Dataset as DA
 
 # Trainer
 from gpt_pipeline import trainer
 
 # Models
-from gpt_pipeline import bigram_nn as Bigram
 from gpt_pipeline import gpt_nn as GPT
 
-dataset = trainer.Dataset()
+print(torch.cuda.is_available())
+
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+dataset = DA(debug=False)
 
 gpt_model = GPT.GPTLanguageModel(dataset.vocab_size)
-m = gpt_model.to(dataset.device)
+m = gpt_model.to(device)
 
 # trainer.train(dataset, gpt_model, m)
 
@@ -25,5 +29,5 @@ gpt_model.load_state_dict(torch.load("./src/weights/trained_data19.005505"))
 gpt_model.eval() # put in reference mode?
 
 while (True):
-    output.line("ROMEO:", dataset, m)
-    time.sleep(5);
+    CLI.line("ROMEO:", dataset, m)
+    time.sleep(5)
