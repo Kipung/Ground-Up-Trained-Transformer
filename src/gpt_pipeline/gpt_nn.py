@@ -10,7 +10,7 @@ import gpt_pipeline.TransformerBlock as TransformerBlock
 
 class GPTLanguageModel(nn.Module):
 
-    def __init__(self, vocab_size):
+    def __init__(self, vocab_size, device=None):
         super().__init__()
 
         # Each token reads off the logits for the next token from a lookup table (torch integrated (I think we can just yoink it))
@@ -20,14 +20,10 @@ class GPTLanguageModel(nn.Module):
         self.ln_f = nn.LayerNorm(parameters.n_embd) # Final Layer Normal
         self.lm_head = nn.Linear(parameters.n_embd, vocab_size)
 
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-        reserve = torch.empty(int(2 * 1024**3 / 4), dtype=torch.float32, device="cuda:0")
+        self.device = parameters.pick_device(device)
 
         if self.device == "cuda":
             print("GPU:", torch.cuda.get_device_name(0))
-            print("Allocated:", round(torch.cuda.memory_allocated(0)/1024**2, 1), "MB")
-            print("Reserved: ", round(torch.cuda.memory_reserved(0)/1024**2, 1), "MB")
 
         self.apply(self._init_weights)
 
@@ -63,20 +59,17 @@ class GPTLanguageModel(nn.Module):
 
         return logits, loss
     
-    def generate(self, idx, max_new_tokens):
-        # idx is (B, T) array of indices in the current context
+    def stream(self, idx, max_new_tokens, temperature=1.0):
+        """Yield one sampled token id (an int) at a time, given a (1, T) context."""
         for _ in range(max_new_tokens):
-            # crop idx to the last block_size tokens
             idx_cond = idx[:, -parameters.block_size:]
-            # get the predictions
-            logits, loss = self(idx_cond)
-            # focus only on the last time step
-            logits = logits[:, -1, :] # becomes (B, C)
-            # apply softmax to get probabilities
-            probs = F.softmax(logits, dim=-1) # (B, C)
-            # sample from the distribution
-            idx_next = torch.multinomial(probs, num_samples=1) # (B, 1)
-            # append sampled index to the running sequence
-            idx = torch.cat((idx, idx_next), dim=1) # (B, T+1)
-        return idx    
+            logits, _ = self(idx_cond)
+            logits = logits[:, -1, :] / temperature
+            probs = F.softmax(logits, dim=-1)
+            idx_next = torch.multinomial(probs, num_samples=1)
+            idx = torch.cat((idx, idx_next), dim=1)
+            yield idx_next.item()
 
+    def generate(self, idx, max_new_tokens, temperature=1.0):
+        new = list(self.stream(idx, max_new_tokens, temperature))
+        return torch.cat((idx, torch.tensor([new], dtype=idx.dtype, device=idx.device)), dim=1)

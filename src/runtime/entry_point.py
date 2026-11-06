@@ -3,6 +3,7 @@ import time
 sys.path.append("./src")
 
 import torch
+import parameters
 
 # Methods
 from gpt_pipeline import output as CLI
@@ -14,18 +15,17 @@ from gpt_pipeline import trainer
 # Models
 from gpt_pipeline import gpt_nn as GPT
 
-print(torch.cuda.is_available())
+device = parameters.pick_device()
+print("device:", device)
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+dataset = DA(debug=False, device=device)
 
-dataset = DA(debug=False)
-
-gpt_model = GPT.GPTLanguageModel(dataset.vocab_size)
+gpt_model = GPT.GPTLanguageModel(dataset.vocab_size, device=device)
 m = gpt_model.to(device)
 
 # trainer.train(dataset, gpt_model, m)
 
-gpt_model.load_state_dict(torch.load("./src/weights/trained_data19.005505"))
+gpt_model.load_state_dict(torch.load("./src/weights/trained_data19.005505", map_location=device))
 gpt_model.eval() # put in reference mode?
 
 while (True):
