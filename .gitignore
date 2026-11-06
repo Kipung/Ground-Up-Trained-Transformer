@@ -6,3 +6,6 @@ src/weights
 
 src/gpt_pipeline/__pycache__
 
+.venv
+.DS_Store
+__pycache__/
